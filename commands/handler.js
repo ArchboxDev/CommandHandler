@@ -1,5 +1,13 @@
 const fs=require("fs");
 
+class Command {
+	constructor(name,description,payload){
+		this.name=name;
+		this.description=description;
+		this.payload=payload;
+	}
+}
+
 class Handler {
 	constructor(bot,prefix){
 		this.bot=bot;
@@ -12,12 +20,12 @@ class Handler {
 			var args = msg.cleanContent.split(" ");
 			
 			for (let cmd in this.commands) {
-				let payload=this.commands[cmd];
-				if (typeof(payload)!="function")
-					throw new Error(`Command payload for "${cmd}" isn't a function.`);
+				cmd=this.commands[cmd];
+				if (typeof(cmd.payload)!="function")
+					throw new Error(`Command payload for "${cmd.name}" isn't a function.`);
 				
-				if (args[0]==this.prefix+cmd){
-					let reply=payload(msg,args);
+				if (args[0]==this.prefix+cmd.name){
+					let reply=cmd.payload(msg,args);
 					if (reply!=undefined&&reply!=null)
 						bot.createMessage(msg.channel.id,reply);
 				}
@@ -25,12 +33,12 @@ class Handler {
 		});
 	}
 	
-	register(name,payload){
+	register(name,description,payload){
 		if (!name) throw new Error("No name for command.");
 		if (!payload) throw new Error(`No payload for command "${name}".`);
 		if (typeof(payload)!="function") throw new Error(`Command payload for "${name}" isn't a function.`);
 		
-		return this.commands[name]=payload;
+		return this.commands[name]=new Command(name,description,payload);
 	}
 	
 	unregister(name){
