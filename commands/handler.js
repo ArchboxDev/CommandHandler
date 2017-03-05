@@ -1,3 +1,5 @@
+const fs=require("fs");
+
 class Handler {
 	constructor(bot,prefix){
 		this.bot=bot;
@@ -36,6 +38,21 @@ class Handler {
 		if (!this.commands[name]) throw new Error(`Command "${name}" doesn't exist.`);
 		
 		delete this.commands[name];
+	}
+	
+	loadcommands(){
+		var files=fs.readdirSync("./cmds");
+		for (let file of files){
+			require(`../cmds/${file}`);
+		}
+	}
+	
+	reloadcommands(){
+		var files=fs.readdirSync("./cmds");
+		for (let file of files){
+			delete require.cache[ require.resolve( `../cmds/${file}` ) ];
+			require(`../cmds/${file}`);
+		}
 	}
 }
 
