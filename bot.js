@@ -7,7 +7,6 @@ const CommandHandler=require("./commands/handler.js"),
 	Commands=new CommandHandler(bot,"a.")
 
 Commands.register("ping",(msg,args)=>{
-	console.log( "Ping" );
 	return `**Pong!** ${msg.channel.guild.shard.latency}ms`;
 });
 
