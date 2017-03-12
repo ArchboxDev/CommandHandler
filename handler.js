@@ -30,7 +30,22 @@ class Handler {
 				if (typeof(cmd.payload)!="function")
 					throw new Error(`Command payload for "${cmd.name}" isn't a function.`);
 				
-				if ( args[0] == pr + cmd.name || args[0] == this.obPrefix + cmd.name ){
+				if ( args[0] == pr + cmd.name || args[0] == this.obPrefix + cmd.name ) {
+					if ( args[1] != undefined && args[1] != null ) {
+						console.log( "args[1]" );
+						for ( let sub in cmd.subcommands ) {
+							sub = cmd.subcommands[ sub ];
+							if ( sub.name == args[1] ) {
+								console.log( "sub.name == args[1]" );
+								var reply=sub.payload(msg,args);
+								if (reply!=undefined&&reply!=null)
+									bot.createMessage(msg.channel.id,reply);
+								
+								return;
+							}
+						}
+					}
+					
 					var reply=cmd.payload(msg,args);
 					if (reply!=undefined&&reply!=null)
 						bot.createMessage(msg.channel.id,reply);
