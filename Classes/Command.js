@@ -1,6 +1,7 @@
 class Command {
 	constructor( name, payload, options ) {
-		this.name=name;
+		this.name = name;
+		this.names = [ name ];
 		this.payload=payload;
 		
 		this.subcommands = {};
@@ -9,6 +10,11 @@ class Command {
 			if ( !( opt != "name" && opt != "payload" ) ) return;
 			
 			this[ opt ] = options[ opt ];
+		}
+		
+		if ( !!options.aliases && typeof options.aliases == "object" ) {
+			for ( let alias of options.aliases )
+				this.names.push( alias );
 		}
 	}
 	
